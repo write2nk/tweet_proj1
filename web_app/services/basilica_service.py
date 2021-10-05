@@ -1,19 +1,31 @@
-from basilica import Connection
+import basilica
+import os
+from dotenv import load_dotenv
 
-API_KEY = "8dbd4037-f1a2-40e3-01ab-1f877bfad9b5"
-sentences = [
-    "This is a sentence!",
-    "This is a similar sentence!",
-    "I don't think this sentence is very similar at all...",
-]
+load_dotenv()
 
-connection = Connection(API_KEY)
-print("CONNECTION", type(connection))
-embeddings = list(connection.embed_sentences(sentences))
-print(embeddings)
+API_KEY = os.getenv("BASILICA_API_KEY")
 
-embedding = connection.embed_sentence("Hello World!!!", model = "twitter")
-print(type(embedding))
-print(type(embedding[0]))
-print(len(embedding))
+def basilica_api_client():
+    connection = basilica.Connection(API_KEY)
+    print(type(connection)) #> <class 'basilica.Connection'>
+    return connection
 
+if __name__ == "__main__":
+
+    print("---------")
+    connection = basilica_api_client()
+
+    print("---------")
+    sentence = "Hello again"
+    sent_embeddings = connection.embed_sentence(sentence)
+    print(list(sent_embeddings))
+
+    print("---------")
+    sentences = ["Hello world!", "How are you?"]
+    print(sentences)
+    # it is more efficient to make a single request for all sentences...
+    embeddings = connection.embed_sentences(sentences)
+    print("EMBEDDINGS...")
+    print(type(embeddings))
+    print(list(embeddings)) # [[0.8556405305862427, ...], ...]
